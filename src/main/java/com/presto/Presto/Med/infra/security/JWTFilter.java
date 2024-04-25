@@ -32,22 +32,21 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var token = this.recoverToken(request);
 
-        try{
-            if (token != null) {
-                    String subject = this.tokenService.validateToken(token);
-                    UserDetails user = this.repository.findByEmail(subject);
+        if (token != null) {
+            try{
+                String subject = this.tokenService.validateToken(token);
+                UserDetails user = this.repository.findByEmail(subject);
 
-                    var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                filterChain.doFilter(request, response);
-            }else{
-                throw new InvalidTokenException("Invalid Token");
+            }catch (InvalidTokenException ex){
+                sendErrorResponse(ex, response);
+                return;
             }
-        }catch (InvalidTokenException ex){
-            sendErrorResponse(ex, response);
         }
 
+        filterChain.doFilter(request, response);
     }
 
     private String recoverToken(HttpServletRequest req){
@@ -59,7 +58,7 @@ public class JWTFilter extends OncePerRequestFilter {
     private void sendErrorResponse (Exception ex, HttpServletResponse response) throws IOException {
         ApiErrorMessage msg = new ApiErrorMessage(ex.getMessage());
 
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
 
