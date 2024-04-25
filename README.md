@@ -6,7 +6,6 @@ Presto Med API é uma API REST desenvolvida durante o aprendizado dos cursos de 
 e realizando algumas alterações de regras de negócio e inclusão de testes.
 
 # Tecnologias utilizadas
-## Back end
 - Java 17
 - Spring Boot
 - Spring Secutiry / JWT
