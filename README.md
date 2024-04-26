@@ -2,8 +2,7 @@
 
 # Sobre o projeto
 
-Presto Med API é uma API REST desenvolvida durante o aprendizado dos cursos de Spring Boot da Alura, aqui eu pude exercitar diversos conhecimentos adquiridos durante o curso
-e realizando algumas alterações de regras de negócio e inclusão de testes.
+Presto Med API é uma API REST desenvolvida para o gerenciamento da agenda e cadastro de consultas de uma clínica médica, nele o usuário pode criar uma conta, procurar por médicos baseados em suas especialidades e agendar uma consulta no horário em que preferir (obedecendo as regras de negócio estabelecidas).
 
 # Tecnologias utilizadas
 - Java 17
