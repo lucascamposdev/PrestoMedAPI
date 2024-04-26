@@ -1,31 +1,22 @@
 package com.presto.Presto.Med.services.appointment.validations;
 
-import com.presto.Presto.Med.domain.appointment.Appointment;
 import com.presto.Presto.Med.domain.appointment.AppointmentRegisterDTO;
-import com.presto.Presto.Med.infra.exceptions.DataAlreadyExists;
 import com.presto.Presto.Med.infra.exceptions.InvalidScheduleException;
 import com.presto.Presto.Med.repositories.AppointmentRepository;
-import com.presto.Presto.Med.repositories.DoctorRepository;
+import com.presto.Presto.Med.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-
 @Component
-public class ValidateDoctorSchedule implements RegisterValidations{
+public class ValidateUserSchedule implements RegisterValidations{
 
     @Autowired
     private AppointmentRepository appointmentRepository;
 
     @Override
     public void validate(AppointmentRegisterDTO dto) {
-
-        if(dto.getDoctorId() == null) return;
-
-        boolean alreadyExists = appointmentRepository
-                .existsByDoctorIdAndDate(dto.getDoctorId(), dto.getDate());
-
-        if(alreadyExists){
-            throw new InvalidScheduleException("This time isn't available.");
+        if(appointmentRepository.existsByUserIdAndDate(dto.getUserId(), dto.getDate())){
+            throw new InvalidScheduleException("user already have an appointment that time.");
         }
     }
 }

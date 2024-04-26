@@ -5,6 +5,7 @@ import com.presto.Presto.Med.domain.appointment.AppointmentRegisterDTO;
 import com.presto.Presto.Med.domain.appointment.AppointmentResponseDTO;
 import com.presto.Presto.Med.domain.doctor.Doctor;
 import com.presto.Presto.Med.domain.user.User;
+import com.presto.Presto.Med.enums.DoctorSpecialties;
 import com.presto.Presto.Med.infra.exceptions.InvalidScheduleException;
 import com.presto.Presto.Med.repositories.AppointmentRepository;
 import com.presto.Presto.Med.repositories.DoctorRepository;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.print.Doc;
 import java.util.List;
 
 @Service
@@ -42,13 +44,27 @@ public class AppointmentService {
     }
 
     public Appointment register(AppointmentRegisterDTO dto){
-        Doctor doctor = doctorService.findById(dto.getDoctorId());
-
         User user = userService.findById(dto.getUserId());
 
         validations.forEach(v -> v.validate(dto));
 
-        return appointmentRepository.save(new Appointment(null, doctor, user, dto.getDate()));
+        Doctor chosenDoctor = chooseDoctor(dto);
+        return appointmentRepository.save(new Appointment(null, chosenDoctor, user, dto.getDate()));
+    }
+
+    private Doctor chooseDoctor(AppointmentRegisterDTO dto){
+        if(dto.getDoctorId() != null){
+            return doctorService.findById(dto.getDoctorId());
+        }
+
+        if(dto.getSpecialty() == null){
+            throw new InvalidScheduleException("doctor id or specialty is mandatory.");
+        }
+
+        Doctor foundDoctor = doctorService.randomAvailableActiveDoctorBySpecialty(dto.getSpecialty(), dto.getDate());
+        dto.setDoctorId(foundDoctor.getId());
+        return foundDoctor;
+
     }
 
     public Appointment findById(Long id){

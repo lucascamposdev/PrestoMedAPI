@@ -4,12 +4,15 @@ import com.presto.Presto.Med.domain.appointment.Appointment;
 import com.presto.Presto.Med.domain.appointment.AppointmentRegisterDTO;
 import com.presto.Presto.Med.domain.doctor.Doctor;
 import com.presto.Presto.Med.domain.user.User;
+import com.presto.Presto.Med.enums.DoctorSpecialties;
+import com.presto.Presto.Med.infra.exceptions.InvalidScheduleException;
 import com.presto.Presto.Med.repositories.AppointmentRepository;
 import com.presto.Presto.Med.repositories.DoctorRepository;
 import com.presto.Presto.Med.repositories.UserRepository;
 import com.presto.Presto.Med.services.appointment.validations.*;
 import com.presto.Presto.Med.services.doctor.DoctorService;
 import com.presto.Presto.Med.services.user.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,16 +62,47 @@ class AppointmentServiceTest {
     @Captor
     private ArgumentCaptor<Appointment> appointmentCaptor;
 
+    @Mock
+    Doctor doctor;
+
+    @Mock
+    User user;
+
+    LocalDateTime time = LocalDateTime.of(2025, 12, 5, 13, 0);
+
+    private final AppointmentRegisterDTO dto =
+            new AppointmentRegisterDTO(
+                    1L,
+                    null,
+                    2L,
+                    time);
     @Test
-    void shouldReturnAppointmentWhenRegister(){
+    void shouldReturnAppointmentWhenRegisterWithDoctorId(){
         // ARRANGE
-        Doctor doctor = new Doctor();
-        User user = new User();
-        LocalDateTime time = LocalDateTime.now();
-
-        AppointmentRegisterDTO dto = new AppointmentRegisterDTO(1L, 2L, time);
-
         BDDMockito.given(doctorService.findById(dto.getDoctorId())).willReturn(doctor);
+        BDDMockito.given(userService.findById(dto.getUserId())).willReturn(user);
+
+        // ACT
+        Appointment appointment = appointmentService.register(dto);
+
+        // ASSERT
+        BDDMockito.then(appointmentRepository).should().save(appointmentCaptor.capture());
+        Appointment savedAppointment = appointmentCaptor.getValue();
+
+        Assertions.assertEquals(doctor, savedAppointment.getDoctor());
+        Assertions.assertEquals(user, savedAppointment.getUser());
+        Assertions.assertEquals(time, savedAppointment.getDate());
+    }
+
+    @Test
+    void shouldReturnAppointmentWhenRegisterWithoutDoctorId(){
+        // ARRANGE
+        dto.setDoctorId(null);
+        dto.setSpecialty(DoctorSpecialties.CARDIOLOGY);
+
+        BDDMockito.given(doctorService
+                .randomAvailableActiveDoctorBySpecialty(dto.getSpecialty(), dto.getDate()))
+                .willReturn(doctor);
         BDDMockito.given(userService.findById(dto.getUserId())).willReturn(user);
 
         // ACT
@@ -86,12 +120,6 @@ class AppointmentServiceTest {
     @Test
     void shouldRunValidationsWhenRegister(){
         // ARRANGE
-        Doctor doctor = new Doctor();
-        User user = new User();
-        LocalDateTime time = LocalDateTime.now();
-
-        AppointmentRegisterDTO dto = new AppointmentRegisterDTO(1L, 2L, time);
-
         BDDMockito.given(doctorService.findById(dto.getDoctorId())).willReturn(doctor);
         BDDMockito.given(userService.findById(dto.getUserId())).willReturn(user);
 

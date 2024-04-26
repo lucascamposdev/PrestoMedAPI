@@ -16,6 +16,9 @@ public class ValidateDoctorActive implements RegisterValidations{
 
     @Override
     public void validate(AppointmentRegisterDTO dto) {
+
+        if(dto.getDoctorId() == null) return;
+
         boolean isActive = doctorRepository.checkIfDoctorIsActive(dto.getDoctorId());
 
         if(!isActive){

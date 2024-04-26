@@ -25,14 +25,15 @@ class ValidateInAdvanceTest {
     LocalDateTime goodTestTime = LocalDateTime.now().plusHours(48);
     LocalDateTime badTestTime = LocalDateTime.now();
 
+    private final AppointmentRegisterDTO dto =
+            new AppointmentRegisterDTO(1L, null, 1L, null);
 
     @Test
     void RightScheduleInAdvanceTime(){
         // ARRANGE
         ReflectionTestUtils.setField(validateInAdvance, "scheduleTimeInAdvance", timeInAdvance);
 
-        AppointmentRegisterDTO dto =
-                new AppointmentRegisterDTO(1L, 1L, goodTestTime);
+        dto.setDate(goodTestTime);
 
         // ACT
         Assertions.assertDoesNotThrow(() -> validateInAdvance.validate(dto));
@@ -43,8 +44,7 @@ class ValidateInAdvanceTest {
         // ARRANGE
         ReflectionTestUtils.setField(validateInAdvance, "scheduleTimeInAdvance", timeInAdvance);
 
-        AppointmentRegisterDTO dto =
-                new AppointmentRegisterDTO(1L, 1L, badTestTime);
+        dto.setDate(badTestTime);
 
         // ACT
         Assertions.assertThrows(InvalidScheduleException.class, () -> validateInAdvance.validate(dto));

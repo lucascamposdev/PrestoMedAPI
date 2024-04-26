@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
     boolean existsByDoctorIdAndDate(Long doctor_id, LocalDateTime date);
+    boolean existsByUserIdAndDate(Long user_id, LocalDateTime date);
 }

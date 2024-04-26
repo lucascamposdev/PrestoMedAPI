@@ -1,10 +1,12 @@
 package com.presto.Presto.Med.domain.appointment;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.presto.Presto.Med.domain.doctor.Doctor;
 import com.presto.Presto.Med.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
 
 import java.time.LocalDateTime;
 

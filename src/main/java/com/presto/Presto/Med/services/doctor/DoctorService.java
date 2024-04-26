@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 public class DoctorService {
 
@@ -27,7 +29,6 @@ public class DoctorService {
         if(doctorRepository.findByCrm(dto.getCrm()) != null){
             throw new DataAlreadyExists("crm already registered.");
         }
-        System.out.println(dto);
 
         return doctorRepository.save(new Doctor(dto));
     }
@@ -69,5 +70,11 @@ public class DoctorService {
         }
 
         doctorRepository.deleteById(id);
+    }
+
+    public Doctor randomAvailableActiveDoctorBySpecialty(DoctorSpecialties specialty, LocalDateTime date){
+        return doctorRepository
+                .randomAvailableActiveDoctorBySpecialty(specialty, date)
+                .orElseThrow(() -> new EntityNotFoundException("no doctors available that time."));
     }
 }

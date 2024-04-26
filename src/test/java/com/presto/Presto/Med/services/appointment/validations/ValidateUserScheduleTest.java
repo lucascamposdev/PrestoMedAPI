@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class ValidateDoctorScheduleTest {
+class ValidateUserScheduleTest {
 
     @InjectMocks
-    ValidateDoctorSchedule validateDoctorSchedule;
+    ValidateUserSchedule validateUserSchedule;
 
     @Mock
     AppointmentRepository appointmentRepository;
@@ -28,23 +28,23 @@ class ValidateDoctorScheduleTest {
             new AppointmentRegisterDTO(1L, null, 1L, LocalDateTime.now());
 
     @Test
-    void DoctorScheduleIsAvailableTest(){
+    void UserScheduleIsAvailableTest(){
         // ARRANGE
-        BDDMockito.given(appointmentRepository.existsByDoctorIdAndDate(dto.getDoctorId(), dto.getDate()))
+        BDDMockito.given(appointmentRepository.existsByUserIdAndDate(dto.getUserId(), dto.getDate()))
                 .willReturn(false);
 
         // ACT & ASSERT
-        Assertions.assertDoesNotThrow(() -> validateDoctorSchedule.validate(dto));
+        Assertions.assertDoesNotThrow(() -> validateUserSchedule.validate(dto));
     }
 
     @Test
-    void DoctorScheduleIsNotAvailableTest(){
+    void UserScheduleIsNotAvailableTest(){
         // ARRANGE
-        BDDMockito.given(appointmentRepository.existsByDoctorIdAndDate(dto.getDoctorId(), dto.getDate()))
+        BDDMockito.given(appointmentRepository.existsByUserIdAndDate(dto.getUserId(), dto.getDate()))
                 .willReturn(true);
 
         // ACT & ASSERT
-        Assertions.assertThrows(InvalidScheduleException.class, () -> validateDoctorSchedule.validate(dto));
+        Assertions.assertThrows(InvalidScheduleException.class, () -> validateUserSchedule.validate(dto));
     }
 
 }

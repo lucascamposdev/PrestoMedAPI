@@ -19,6 +19,9 @@ class ValidateClinicTimeTest {
     @InjectMocks
     private ValidateClinicTime validateClinicTime;
 
+    private final AppointmentRegisterDTO dto =
+            new AppointmentRegisterDTO(1L, null, 1L, null);
+
     @Test
     void RightClinicTimeTest(){
         ReflectionTestUtils.setField(validateClinicTime, "openingHour", 9);
@@ -26,9 +29,7 @@ class ValidateClinicTimeTest {
 
         LocalDateTime goodTime =  LocalDateTime.of(2025, 1, 15, 13, 0);
 
-        AppointmentRegisterDTO dto =
-                new AppointmentRegisterDTO(1L, 1L, goodTime);
-
+        dto.setDate(goodTime);
 
         Assertions.assertDoesNotThrow(() -> validateClinicTime.validate(dto));
     }
@@ -40,9 +41,7 @@ class ValidateClinicTimeTest {
 
         LocalDateTime wrongTime =  LocalDateTime.now().plusMonths(1).withHour(8);
 
-        AppointmentRegisterDTO dto =
-                new AppointmentRegisterDTO(1L, 1L, wrongTime);
-
+        dto.setDate(wrongTime);
 
         Assertions.assertThrows(InvalidScheduleException.class, () -> validateClinicTime.validate(dto));
     }

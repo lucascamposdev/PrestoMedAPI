@@ -1,5 +1,6 @@
 package com.presto.Presto.Med.domain.doctor;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.presto.Presto.Med.domain.appointment.Appointment;
 import com.presto.Presto.Med.enums.DoctorSpecialties;
 import jakarta.persistence.*;

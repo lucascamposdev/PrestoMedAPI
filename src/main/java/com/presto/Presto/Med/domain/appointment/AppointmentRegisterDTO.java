@@ -3,6 +3,7 @@ package com.presto.Presto.Med.domain.appointment;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.presto.Presto.Med.domain.doctor.Doctor;
 import com.presto.Presto.Med.domain.user.User;
+import com.presto.Presto.Med.enums.DoctorSpecialties;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Future;
@@ -10,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -17,10 +19,12 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
 public class AppointmentRegisterDTO {
 
-    @NotNull(message = "doctor id must not be null.")
     private Long doctorId;
+
+    private DoctorSpecialties specialty;
 
     @NotNull(message = "user id must not be null.")
     private Long userId;
