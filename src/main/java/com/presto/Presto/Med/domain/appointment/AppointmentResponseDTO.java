@@ -16,16 +16,16 @@ public class AppointmentResponseDTO {
 
     private Long id;
 
-    private Long doctor;
+    private Long doctorId;
 
-    private Long user;
+    private Long userId;
 
     private LocalDateTime date;
 
     public AppointmentResponseDTO(Appointment a){
         this.id = a.getId();
-        this.doctor = a.getDoctor().getId();
-        this.user = a.getUser().getId();
+        this.doctorId = a.getDoctor().getId();
+        this.userId = a.getUser().getId();
         this.date = a.getDate();
     }
 }

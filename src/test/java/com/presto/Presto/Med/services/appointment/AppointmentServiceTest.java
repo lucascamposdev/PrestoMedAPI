@@ -2,6 +2,7 @@ package com.presto.Presto.Med.services.appointment;
 
 import com.presto.Presto.Med.domain.appointment.Appointment;
 import com.presto.Presto.Med.domain.appointment.AppointmentRegisterDTO;
+import com.presto.Presto.Med.domain.appointment.AppointmentUpdateDTO;
 import com.presto.Presto.Med.domain.doctor.Doctor;
 import com.presto.Presto.Med.domain.user.User;
 import com.presto.Presto.Med.enums.DoctorSpecialties;
@@ -29,6 +30,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class AppointmentServiceTest {
@@ -136,6 +139,34 @@ class AppointmentServiceTest {
         BDDMockito.then(validator2).should().validate(dto);
         BDDMockito.then(validator3).should().validate(dto);
         BDDMockito.then(validator4).should().validate(dto);
+    }
+
+    @Test
+    void shouldUpdateAppointment(){
+        // ARRANGE
+        Long appointmentId = 1L;
+        LocalDateTime newDate = LocalDateTime.now().plusDays(5);
+
+        Appointment foundAppointment = new Appointment();
+        foundAppointment.setId(appointmentId);
+        foundAppointment.setDate(LocalDateTime.now());
+        foundAppointment.setDoctor(doctor);
+        foundAppointment.setUser(user);
+
+
+        BDDMockito.given(appointmentRepository
+                        .findById(appointmentId)).willReturn(Optional.of(foundAppointment));
+
+        // ACT
+        Appointment updatedAppointment = appointmentService
+                .reschedule(appointmentId, new AppointmentUpdateDTO(newDate));
+
+        // ASSERT
+        assertNotNull(updatedAppointment);
+        assertEquals(updatedAppointment.getDate(), newDate);
+        assertEquals(updatedAppointment.getId(), appointmentId);
+
+        verify(appointmentRepository, times(1)).findById(appointmentId);
     }
 
 }

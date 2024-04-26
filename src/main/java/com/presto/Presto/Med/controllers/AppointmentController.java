@@ -3,6 +3,7 @@ package com.presto.Presto.Med.controllers;
 import com.presto.Presto.Med.domain.appointment.Appointment;
 import com.presto.Presto.Med.domain.appointment.AppointmentRegisterDTO;
 import com.presto.Presto.Med.domain.appointment.AppointmentResponseDTO;
+import com.presto.Presto.Med.domain.appointment.AppointmentUpdateDTO;
 import com.presto.Presto.Med.services.appointment.AppointmentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -40,5 +41,11 @@ public class AppointmentController {
     public ResponseEntity<?> cancel(@PathVariable Long id){
         service.cancel(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> reschedule(@RequestBody AppointmentUpdateDTO dto, @PathVariable Long id){
+        Appointment appointment = service.reschedule(id, dto);
+        return ResponseEntity.ok(new AppointmentResponseDTO(appointment));
     }
 }

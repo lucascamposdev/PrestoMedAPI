@@ -3,6 +3,7 @@ package com.presto.Presto.Med.services.appointment;
 import com.presto.Presto.Med.domain.appointment.Appointment;
 import com.presto.Presto.Med.domain.appointment.AppointmentRegisterDTO;
 import com.presto.Presto.Med.domain.appointment.AppointmentResponseDTO;
+import com.presto.Presto.Med.domain.appointment.AppointmentUpdateDTO;
 import com.presto.Presto.Med.domain.doctor.Doctor;
 import com.presto.Presto.Med.domain.user.User;
 import com.presto.Presto.Med.enums.DoctorSpecialties;
@@ -79,5 +80,21 @@ public class AppointmentService {
             throw new EntityNotFoundException("appointment not found.");
         }
         appointmentRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Appointment reschedule(Long id, AppointmentUpdateDTO dto){
+        Appointment foundAppointment = appointmentRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("appointment not found."));
+
+        AppointmentRegisterDTO registerDTO =
+                new AppointmentRegisterDTO(foundAppointment, dto.getDate());
+
+        validations.forEach(v -> v.validate(registerDTO));
+
+        foundAppointment.setDate(dto.getDate());
+
+        return foundAppointment;
     }
 }

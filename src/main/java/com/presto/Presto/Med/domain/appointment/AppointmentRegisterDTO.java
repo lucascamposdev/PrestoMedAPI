@@ -33,4 +33,11 @@ public class AppointmentRegisterDTO {
     @Future(message = "time must be in future.")
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime date;
+
+    public AppointmentRegisterDTO(Appointment appointment, LocalDateTime desiredTime){
+        this.doctorId = appointment.getDoctor().getId();
+        this.specialty = appointment.getDoctor().getSpecialty();
+        this.userId = appointment.getUser().getId();
+        this.date = desiredTime;
+    }
 }
